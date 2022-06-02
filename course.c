@@ -507,10 +507,17 @@ int main(int argc, char* argv[])//int main()
 	int i, n, hod, k;
 	int counter = 1;
 	int shet = 0;
-
+		if (argv[1] == "--help") 
+	{
+		printf("Введите размер стороны поля: \n");
+		printf("Введите количество ходов: \n");
+		printf("Введите размерность: \n");
+		return 0;
+	}
 
 	system("color 2");
 	system("chcp 1251");
+
 	//system("cls");
 	//printf("Введите размер стороны поля: ");
 	//scanf("%d", &n);
@@ -561,7 +568,7 @@ int main(int argc, char* argv[])//int main()
 	//создаем line
 	int* line = create_line(a, n, shans);
 
-
+	
 	// применяем правила к line
 	pravila(line, p1, p2, p3, n);
 	// записываем line в a по такому же принципу
@@ -576,32 +583,32 @@ int main(int argc, char* argv[])//int main()
 	fprintf(fo, "хищников жертв\n");
 	while (shet != hod)
 	{
-		//system("cls");
+		system("cls");
 		int shans = rand() % 4;
 		line = create_line(a, n, shans);
 		pravila(line, p1, p2, p3, n);
-		hish = podshet(line, n, s);
-		s = !s;
-		jertv = podshet(line, n, s);
-		s = !s;
-		vozvrat_martix(a, line, n, shans);
-		mashab(a, a1, k, n);
-		print_matrix(a1, n * k, fruit);
-		char str[15];
-		sprintf(str, "%08d.png", shet);
-		printf("%s\n", str);
+			hish = podshet(line, n, s);
+			s = !s;
+			jertv = podshet(line, n, s);
+			s = !s;
+			vozvrat_martix(a, line, n, shans);
+			mashab(a, a1, k, n);
+			print_matrix(a1, n * k, fruit);
+			char str[15];
+			sprintf(str, "%08d.png", shet);
+			printf("%s\n", str);
 
-		save_png_to_file(&fruit, str);
+			save_png_to_file(&fruit, str);
 
 
 
-		fprintf(fo, "%d\t%d\t%d\n", shet, hish, jertv);
-
+			fprintf(fo, "%d\t%d\t%d\n", shet, hish, jertv);
+		
 
 
 		shet++;
 
-		getchar();
+		//getchar();
 
 	}
 	fclose(fo);
