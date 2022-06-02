@@ -1,12 +1,8 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #include <stdio.h>
-
 #include <png.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <malloc.h>
 #include <time.h>
 #include <math.h>
@@ -283,7 +279,9 @@ int* create_line(int** a, int n, int tipe)
 		printf("\n");
 
 		break;
+
 	}
+
 
 	return line;
 }
@@ -452,6 +450,25 @@ void vozvrat_martix(int** a, int* line, int n, int tipe)
 	}
 
 }
+void mashab(int** a, int** a1, int k, int n) //a, a_1, k, n
+{
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			for (int i1 = 0; i1 < k; i1++)
+			{
+				for (int j1 = 0; j1 < k; j1++)
+				{
+					a1[(i * k) + i1][(j * k) + j1] = a[i][j];
+					//printf("%d", a1[(i * k) + i1][(j * k) + j1]);
+				}
+			}
+		}
+	}
+
+	return 0;
+}
 int podshet(int* line, int n, bool s)
 {
 	int shixlo = 0;
@@ -478,7 +495,7 @@ int podshet(int* line, int n, bool s)
 
 	return shixlo;
 }
-int main()
+int main(int argc, char* argv[])//int main()
 {
 	// Создание / открытие файла
 	FILE* fo;
@@ -486,23 +503,28 @@ int main()
 	int x;
 	int y;
 	int** a;
-	int i, n, hod;
+	int** a1;
+	int i, n, hod, k;
 	int counter = 1;
 	int shet = 0;
 
 
 	system("color 2");
 	system("chcp 1251");
-	system("cls");
-	printf("Введите размер стороны поля: ");
-	scanf("%d", &n);
-	printf("Введите количество ходов: ");
-	scanf("%d", &hod);
-
+	//system("cls");
+	//printf("Введите размер стороны поля: ");
+	//scanf("%d", &n);
+	n = atoi(argv[1]);
+	//printf("Введите количество ходов: ");
+	//scanf("%d", &hod);
+	hod = atoi(argv[2]);
+	//printf("Введите размерность: ");
+	//scanf("%d", &k);
+	k = atoi(argv[3]);
 	/* Create an image. */
 
-	fruit.width = n;
-	fruit.height = n;
+	fruit.width = n * k;
+	fruit.height = n * k;
 
 	fruit.pixels = calloc(sizeof(pixel_t), fruit.width * fruit.height);
 
@@ -516,13 +538,7 @@ int main()
 		}
 	}
 
-	save_png_to_file(&fruit, "1.png");
 
-	// pixel = pixel_at(&fruit, 10, 5);
-	 //pixel->red = 255;
-	 //pixel->green = 0;
-	 //pixel->blue = 0;
-	 /* Write the image to a file 'fruit.png'. */
 
 
 
@@ -537,25 +553,20 @@ int main()
 	float p3 = float_rand(0.0f, 1.0f);
 	printf("xx: %f\n", p3);
 	a = create_matrix(n);
+	a1 = create_matrix(n * k);
 
 
 	// заполняем случайно а
 	fill_rand(a, n);
-	//print_matrix(a, n, fruit);
+	//создаем line
 	int* line = create_line(a, n, shans);
-	//int* line = create_line(a, n, 1);
-	//print_line(line, n);
-	//printf("\n");
+
 
 	// применяем правила к line
 	pravila(line, p1, p2, p3, n);
-	//print_line(line, n);
 	// записываем line в a по такому же принципу
 	vozvrat_martix(a, line, n, shans);
-	//vozvrat_martix(a, line, n, 1);
-	//print_matrix(a, n);
 
-	//print_matrix(a, n, fruit);
 
 
 
@@ -565,7 +576,7 @@ int main()
 	fprintf(fo, "хищников жертв\n");
 	while (shet != hod)
 	{
-		system("cls");
+		//system("cls");
 		int shans = rand() % 4;
 		line = create_line(a, n, shans);
 		pravila(line, p1, p2, p3, n);
@@ -574,20 +585,18 @@ int main()
 		jertv = podshet(line, n, s);
 		s = !s;
 		vozvrat_martix(a, line, n, shans);
-		print_matrix(a, n, fruit);
-		sprintf(line, "%08d.png", shet);
-		save_png_to_file(&fruit, "2.png");
+		mashab(a, a1, k, n);
+		print_matrix(a1, n * k, fruit);
+		char str[15];
+		sprintf(str, "%08d.png", shet);
+		printf("%s\n", str);
+
+		save_png_to_file(&fruit, str);
 
 
-		// Запись в файл
 
-		//const int N = 20;
-		//float m, f;
-		//for (i = 0; i <= N; i++) {
-			//m = (float)i / N;
-			//f = pow(m, 2);
-		fprintf(fo, "%d       %d\n", hish, jertv);
-		//}
+		fprintf(fo, "%d\t%d\t%d\n", shet, hish, jertv);
+
 
 
 		shet++;
@@ -598,9 +607,15 @@ int main()
 	fclose(fo);
 
 
-	for (i = 0; i < n; i++)
+	for (i = 0; i < n; i++) {
 		free(a[i]);
+	}
+	for (i = 0; i < n * k; i++)
+	{
+		free(a1[i]);
+	}
 	free(a);
+	free(a1);
 	free(line);
 
 
